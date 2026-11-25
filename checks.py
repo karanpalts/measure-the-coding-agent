@@ -53,7 +53,16 @@ def edited_without_reading(trace):
                for c in calls(trace))
 
 
-CHECKS = [edited_without_testing_after, read_git_history, same_call_three_times, edited_without_reading]
+
+def edited_outside_src(trace):
+    """It edited or wrote a file outside src/."""
+    return any(
+        c["name"] in EDITS and not os.path.normpath(c["args"].get("path", "")).startswith("src" + os.sep)
+        for c in calls(trace)
+    )
+
+
+CHECKS = [edited_without_testing_after, read_git_history, same_call_three_times, edited_without_reading, edited_outside_src]
 
 
 def main(folder):
